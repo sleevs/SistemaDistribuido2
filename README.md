@@ -7,10 +7,9 @@ de crédito, limite e emitir cartão.
 
 ### Comportamento
 
-Microservice cartoes-ms responsável por o cadastro de cliente e a proposta de crédito.
+Microservice cartoes-ms responsável por cadastrar o cliente e a proposta de crédito.
 
-Microservice emissor-ms responsável por por emitir o cartão físico (Para exemplificar realize uma notificação por E-mail com um template do cartão 
-tendo todas as informações necessárias). 
+Microservice emissor-ms responsável por emitir o cartão físico (Para exemplificar realize uma notificação por E-mail com um template do cartão tendo todas as informações necessárias). 
 
 
 
