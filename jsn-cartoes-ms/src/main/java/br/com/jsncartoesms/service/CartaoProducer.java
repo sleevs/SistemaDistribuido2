@@ -6,26 +6,37 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import br.com.jsncartoesms.dto.CartaoDto;
+import br.com.jsncartoesms.dto.PropostaDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 public class CartaoProducer {
 
     
     @Autowired
-    private KafkaTemplate<String, CartaoDto> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
     
     @Value("${kafka.topic.cartao}")
     String topicName;
 
-    public CartaoProducer(KafkaTemplate<String, CartaoDto> kafkaTemplate,
+    public CartaoProducer(KafkaTemplate<String, String> kafkaTemplate,
                           @Value("${kafka.topic.cartao}") String topicName) {
         this.kafkaTemplate = kafkaTemplate;
         this.topicName = topicName;
     }
     
 
-    public void enviarCartaoParaEmissao(CartaoDto cartaoCredito) {
-        kafkaTemplate.send(topicName, cartaoCredito);
+    public void enviarCartaoParaEmissao(PropostaDto proposta) {
+        
+        try{
+            ObjectMapper  map = new ObjectMapper();
+             String msg = map.writeValueAsString(proposta);
+             kafkaTemplate.send(topicName, msg);
+             System.out.println("MENSAGEM ENVIADA " + msg);
+        }catch(Exception e){
+
+        }
     }
     
 }

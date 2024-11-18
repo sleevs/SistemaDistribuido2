@@ -38,7 +38,7 @@ public class KafkaConfig {
 
 
     @Bean
-    public KafkaTemplate<String, CartaoDto> kafkaTemplate() {
+    public KafkaTemplate<String, String> kafkaTemplate() {
         Map<String, Object> producerProps = new HashMap<>();
         producerProps.put("bootstrap.servers", bootstrapServers);
         producerProps.put("key.serializer", StringSerializer.class);
@@ -47,7 +47,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, CartaoDto> consumerFactory() {
+    public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> consumerProps = new HashMap<>();
         consumerProps.put("bootstrap.servers", bootstrapServers);
         consumerProps.put("group.id", groupId);

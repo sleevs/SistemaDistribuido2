@@ -1,13 +1,15 @@
 package br.com.jsncartoesms.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import br.com.jsncartoesms.dto.PropostaDto;
 import br.com.jsncartoesms.dto.CartaoDto;
 import br.com.jsncartoesms.dto.ClienteDto;
+import br.com.jsncartoesms.service.CartaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,7 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public class CartaoController {
     
 
-
+    @Autowired
+    private CartaoService cartaoService;
 
     @Operation(
     summary = "Cadastrar Cliente",
@@ -62,17 +65,17 @@ public class CartaoController {
     @ApiResponse(responseCode = "400", description = "Requisição inválida")
     })
     @PostMapping("/criar-proposta")
-    public ResponseEntity<Object> criarProposta(@RequestBody CartaoDto cartaoDto) {
+    public ResponseEntity<Object> criarProposta(@RequestBody PropostaDto proposta) {
 
         try{
 
-            if(cartaoDto == null){
+            if(proposta == null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO DE VALIDAÇÃO DE INPUT , O FORMULÁRIO DE ESTAR CORRETAMENTE PREENCHIDO.");
             }
 
             
-        //    CartaoDto dto = accountService.create(account);
-        CartaoDto dto = null;
+            PropostaDto dto = cartaoService.criarProposta(proposta);
+       
             if(dto != null){
                 return ResponseEntity.ok(dto);
             }

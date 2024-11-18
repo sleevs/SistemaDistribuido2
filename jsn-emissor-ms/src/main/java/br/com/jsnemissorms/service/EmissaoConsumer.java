@@ -17,9 +17,10 @@ public class EmissaoConsumer {
      String topicName;
 
     @KafkaListener(topics = "cartao-topic", groupId = "emissor-group")
-    public void consumirMensagem(CartaoDto cartaoCredito) {
+    public void consumirMensagem(String cartaoCredito) {
         // Aqui o microserviço emissor-ms processa a emissão e envia o email
-        emissorService.enviarEmail(cartaoCredito);
+        System.out.println("MENSAGEM RECEBIDAS " + cartaoCredito);
+       // emissorService.enviarEmail(cartaoCredito);
     }
     
 }

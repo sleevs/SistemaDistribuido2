@@ -1,10 +1,12 @@
 package br.com.jsncartoesms.dto;
 
+import java.math.BigDecimal;
+
 public class PropostaDto {
     
 
     private String clientNome;
-    private Double limite;
+    private BigDecimal limite;
 
     public PropostaDto(){
 
@@ -18,11 +20,11 @@ public class PropostaDto {
         this.clientNome = clientNome;
     }
 
-    public Double getLimite() {
+    public BigDecimal getLimite() {
         return limite;
     }
 
-    public void setLimite(Double limite) {
+    public void setLimite(BigDecimal limite) {
         this.limite = limite;
     }
 

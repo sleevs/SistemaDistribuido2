@@ -1,15 +1,20 @@
 package br.com.jsncartoesms.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import br.com.jsncartoesms.dto.CartaoDto;
+import br.com.jsncartoesms.dto.PropostaDto;
 
 @Service
 public class CartaoService {
 
 
+    @Autowired
+    private CartaoProducer CartaoProducer;
 
     /*
      * criar cartao de credito 
@@ -17,8 +22,13 @@ public class CartaoService {
      * realizar chamada para o servicço emissao de cartão
      * 
      */
-    public void criarCartaoDeCredito(CartaoDto cartao){
-        
+    public PropostaDto criarProposta(PropostaDto proposta){
+       
+        if(proposta.getLimite().intValue() <= 1000){
+            CartaoProducer.enviarCartaoParaEmissao(proposta);
+            return proposta;
+        }
+        return null;
     }
 
 
