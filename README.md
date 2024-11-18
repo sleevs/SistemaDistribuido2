@@ -23,7 +23,18 @@ Pré-requisitos
  -  Apache Kafka
  -  Docker
 
+### Executar o seguinte comando docker para iniciar o Apache Kafka :
 
-### Executar os comandos maven :
+docker-compose up -d
 
-......
+##### comandos para criar o topico no o Apache Kafka :
+
+docker container exec -it kafka /bin/bash
+
+kafka-console-producer --broker-list localhost:9092 --topic cartao-topic  
+
+### Comando maven para iniciar o microserviço :
+
+mvn clean install
+
+mvn spring-boot:run
