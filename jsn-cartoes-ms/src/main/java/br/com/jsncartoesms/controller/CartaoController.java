@@ -1,5 +1,7 @@
 package br.com.jsncartoesms.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.jsncartoesms.dto.PropostaDto;
-import br.com.jsncartoesms.dto.CartaoDto;
-import br.com.jsncartoesms.dto.ClienteDto;
 import br.com.jsncartoesms.service.CartaoService;
+import br.com.jsncartoesms.util.Validador;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,40 +21,6 @@ public class CartaoController {
 
     @Autowired
     private CartaoService cartaoService;
-
-    @Operation(
-    summary = "Cadastrar Cliente",
-    description = "Informe os dados básicos para cadastrar cliente.",
-    tags = {"Cadastrar Cliente"} 
-    )
-    @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Cadastro do cliente realizado com sucesso"),
-    @ApiResponse(responseCode = "400", description = "Requisição inválida")
-    })
-    @PostMapping("/cadastrar-cliente")
-    public ResponseEntity<Object> criarCliente(@RequestBody ClienteDto clienteDto) {
-
-        try{
-
-            if(clienteDto == null){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO DE VALIDAÇÃO DE INPUT , O FORMULÁRIO DE ESTAR CORRETAMENTE PREENCHIDO.");
-            }
-
-            
-        //    CartaoDto dto = accountService.create(account);
-        CartaoDto dto = null;
-            if(dto != null){
-                return ResponseEntity.ok(dto);
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO DE VALIDAÇÃO DE INPUT ");
-      
-        }catch(Exception e){
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ERRO NO SERVIDOR A PROCESSAR ESSA REQUISIÇÃO.");
-        }
-    }
-
-
 
     @Operation(
     summary = "Criar proposta de crédito",
@@ -68,9 +35,10 @@ public class CartaoController {
     public ResponseEntity<Object> criarProposta(@RequestBody PropostaDto proposta) {
 
         try{
-
-            if(proposta == null){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO DE VALIDAÇÃO DE INPUT , O FORMULÁRIO DE ESTAR CORRETAMENTE PREENCHIDO.");
+            Map<String,Boolean> verificar = Validador.verificar(proposta);
+            if(!verificar.containsKey("OK")){
+                
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO DE VALIDAÇÃO DE INPUT :" + verificar.keySet());
             }
 
             
@@ -79,7 +47,7 @@ public class CartaoController {
             if(dto != null){
                 return ResponseEntity.ok(dto);
             }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO DE VALIDAÇÃO DE INPUT ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO NO PROCESSAMENTO DOS DADOS ");
       
         }catch(Exception e){
 

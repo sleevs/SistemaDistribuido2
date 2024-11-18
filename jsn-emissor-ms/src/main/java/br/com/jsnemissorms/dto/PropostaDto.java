@@ -1,4 +1,4 @@
-package br.com.jsncartoesms.dto;
+package br.com.jsnemissorms.dto;
 
 import java.math.BigDecimal;
 
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PropostaDto {
     
+
     @JsonProperty("Nome")
     private String nome;
     @JsonProperty("Email")
@@ -29,6 +30,14 @@ public class PropostaDto {
         this.nome = nome;
     }
 
+    public BigDecimal getLimite() {
+        return limite;
+    }
+
+    public void setLimite(BigDecimal limite) {
+        this.limite = limite;
+    }
+
     public String getBanco() {
         return banco;
     }
@@ -45,15 +54,6 @@ public class PropostaDto {
         this.tipo = tipo;
     }
 
-    public BigDecimal getLimite() {
-        return limite;
-    }
-
-    public void setLimite(BigDecimal limite) {
-        this.limite = limite;
-    }
-
-
     public String getEmail() {
         return email;
     }
@@ -64,4 +64,5 @@ public class PropostaDto {
 
     
     
+
 }
