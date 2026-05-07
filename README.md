@@ -1,40 +1,60 @@
+# Sistema de Emissão de Cartões de Crédito com Arquitetura Baseada em Microservices
 
-Demostração de um sistema que resolve um problema de cartão de crédito onde um
-dado banco trabalha com cartões de crédito e 
-determinado Cliente precise emitir um cartão. Então, o sistema deverá lançar proposta 
-de crédito, limite e emitir cartão. 
+Sistema backend distribuído que simula o fluxo de análise de crédito e emissão de cartões, utilizando arquitetura orientada a eventos com Apache Kafka e Spring Boot.
 
+O sistema modela o processo de um banco desde o cadastro do cliente até a emissão do cartão.
 
-### Comportamento
+---
 
-Microservice cartoes-ms responsável por cadastrar o cliente e a proposta de crédito.
+## Problema
 
-Microservice emissor-ms responsável por emitir o cartão físico (Para exemplificar realize uma notificação por E-mail com um template do cartão tendo todas as informações necessárias). 
+Processos de emissão de cartão de crédito em sistemas bancários tradicionais costumam ser:
+- Fortemente acoplados
+- Difíceis de escalar
+- Dependentes de fluxos síncronos
+- Pouco resilientes a falhas
 
+Isso dificulta a evolução do sistema e a integração entre etapas como análise de crédito e emissão de cartão.
 
+---
 
+## Solução
 
-### Executar a aplicação backend 
+Este projeto implementa uma arquitetura baseada em microservices e comunicação assíncrona para simular o fluxo de emissão de cartão.
 
-Pré-requisitos
+O sistema é dividido em serviços independentes que se comunicam via eventos.
 
- -  Java 21
- -  Maven
- -  Apache Kafka
- -  Docker
+---
 
-### Executar o seguinte comando docker para iniciar o Apache Kafka :
+## Funcionalidades
 
-docker-compose up -d
+- Cadastro de cliente e proposta de crédito (`cartoes-ms`)
+- Processamento e emissão de cartão (`emissor-ms`)
+- Comunicação assíncrona via Apache Kafka
+- Simulação de envio de cartão via e-mail (template)
+- Arquitetura desacoplada baseada em eventos
 
-##### comandos para criar o topico no o Apache Kafka :
+---
 
-docker container exec -it kafka /bin/bash
+## Stack
 
-kafka-console-producer --broker-list localhost:9092 --topic cartao-topic  
+- Java 21
+- Spring Boot
+- Apache Kafka
+- Docker
+- Maven
 
-### Comando maven para iniciar o microserviço :
+---
 
-mvn clean install
+## Arquitetura
 
-mvn spring-boot:run
+```text
+Client
+  ↓
+cartoes-ms (Producer)
+  ↓
+Kafka Topic (cartao-topic)
+  ↓
+emissor-ms (Consumer)
+  ↓
+Email Notification (simulação de emissão do cartão)
