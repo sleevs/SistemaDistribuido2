@@ -21,40 +21,106 @@ Isso dificulta a evolução do sistema e a integração entre etapas como análi
 ## Solução
 
 Este projeto implementa uma arquitetura baseada em microservices e comunicação assíncrona para simular o fluxo de emissão de cartão.
-
 O sistema é dividido em serviços independentes que se comunicam via eventos.
 
 ---
 
 ## Funcionalidades
 
-- Cadastro de cliente e proposta de crédito (`cartoes-ms`)
-- Processamento e emissão de cartão (`emissor-ms`)
-- Comunicação assíncrona via Apache Kafka
-- Simulação de envio de cartão via e-mail (template)
-- Arquitetura desacoplada baseada em eventos
+- Cadastro de clientes e propostas de crédito (`cartoes-ms`)
+- Processamento e emissão de cartões (`emissor-ms`)
+- Comunicação assíncrona entre microservices via Apache Kafka
+- Notificação de emissão de cartões por e-mail (`notification-ms`)
+- Arquitetura desacoplada e orientada a eventos (Event-Driven Architecture)
 
 ---
+
+
+## Responsabilidade de cada serviço
+
+- cartoes-ms: Cadastra o cliente, recebe a proposta inicial e publica o evento no tópico `pedido-criado`.
+- emissor-ms: Consome a proposta do tópico `pedido-criado`, simula a análise/emissão do cartão e publica o evento no tópico `cartao-emitido`.
+- notificacao-ms: Consome o evento do tópico `cartao-emitido` e simula o envio de e-mail ao cliente.
+
+
+##### Tópicos Kafka
+
+- `pedido-creado`: Recebe pedidos de emissão de cartões.
+- `cartao-eitido`: Comunica a conclusão da emissão do cartão.
+- `pedido-criado-dead-letter`: Armazena mensagens que falharam no processamento da emissão.
+- `cartao-emitido-dead-letter`: Armazena mensagens que falharam no envio de notificações.
+
+##### Consumer Groups
+
+- `emissor-group` (`emissor-ms`): Consome pedidos e realiza a emissão dos cartões.
+- `notification-group` (`notification-ms`): Consome eventos de emissão e envia notificações por e-mail.
+
+
+##### Estratégia de Resiliência: Dead Letter Topic
+ - Política de Retry: O consumidor tentará processar a mensagem **3 vezes** em caso de falhas intermitentes.
+ - Encaminhamento para DLT: Caso o erro persista após as 3 tentativas, a mensagem é movida para o respectivo tópico de falha:
+ - Falha na Emissão (`emissor-ms`): Encaminhada para `pedido-criado-dead-letter`.
+ - Falha na Notificação (`notificacao-ms`): Encaminhada para `cartao-emitido-dead-letter`.
+
+##### Estratégias de Resiliência e Consistência: Outbox Pattern.
+
+- Consistência na Publicação: Transactional Outbox Pattern
+Para evitar o cenário de falha atômica na criação de propostas no serviço `cartoes-ms` (onde os dados são salvos no banco, mas a publicação no Kafka falha por instabilidade do broker, ou vice-versa):
+
+- Persistência Atômica: A gravação dos dados da proposta e a intenção do evento de publicação (`PedidoCriadoEvent`) são executadas dentro da **mesma transação ACID** do banco de dados relacional.
+- Garantia de Entrega : Um processo em segundo plano monitora a tabela de outbox e garante que a mensagem seja enviada e confirmada pelo Apache Kafka com sucesso antes de marcá-la como processada, eliminando cenários de inconsistência entre o banco e o cluster.
+
+---
+
+## Arquitetura e Decisões Técnicas
+
+- Apache Kafka para comunicação assíncrona entre microservices.
+- Um tópico para cada evento de negócio.
+- Um consumer group independente por serviço consumidor.
+- Retry + Dead Letter Topic (DLT) para tratamento de falhas.
+- `pedidoId` como chave das mensagens para garantir ordenação por pedido.
+- Idempotência para evitar processamento e emissão duplicados.
+- Transactional Outbox Garantia de Entrega com Transactional Outbox
+
+### Fluxo da Arquitetura
+
+```text
+CLIENT
+  |
+  v
+cartoes-ms
+(Cadastro + Proposta)
+  |
+  | publica PedidoCriadoEvent
+  v
+Kafka: predido-creado-topic
+  |
+  v
+emissor-ms
+(group: emissor-group)
+  | Emite cartão
+  | publica CartaoEmitidoEvent
+  v
+Kafka: cartao-emitido-topic
+  |
+  v
+notificacao-ms
+(group: notificacao-group)
+  |
+  v
+Envio de e-mail
+
+
+---
+
 
 ## Stack
 
 - Java 21
+- Maven
 - Spring Boot
 - Apache Kafka
 - Docker
-- Maven
-
----
-
-## Arquitetura
-
-```text
-Client
-  ↓
-cartoes-ms (Producer)
-  ↓
-Kafka Topic (cartao-topic)
-  ↓
-emissor-ms (Consumer)
-  ↓
-Email Notification (simulação de emissão do cartão)
+- Terraform
+- Postgres
+- OpenTelemetry
