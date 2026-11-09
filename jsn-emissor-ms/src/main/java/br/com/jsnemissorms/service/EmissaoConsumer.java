@@ -19,7 +19,7 @@ public class EmissaoConsumer {
      @Value("${kafka.topic.cartao}") 
      String topicName;
 
-    @KafkaListener(topics = "cartao-topic", groupId = "emissor-group")
+    @KafkaListener(topics = "pedido-creado", groupId = "emissor-group")
     public void consumirMensagem(String cartaoCredito) {
         // Aqui o microserviço emissor-ms processa a emissão e envia o email
         try{
@@ -27,7 +27,9 @@ public class EmissaoConsumer {
         ObjectMapper map = new ObjectMapper();
         PropostaDto proposta = map.readValue(cartaoCredito, PropostaDto.class);
         System.out.println("MENSAGEM RECEBIDAS " + cartaoCredito);
-        emissorService.enviarEmail(proposta);
+            
+        emissorService.criarCartao(proposta);
+      
 
         }catch(Exception e){
             e.printStackTrace();

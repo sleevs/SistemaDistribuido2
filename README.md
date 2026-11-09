@@ -34,7 +34,27 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
 - Simulação de envio de cartão via e-mail (template)
 - Arquitetura desacoplada baseada em eventos
 
+
 ---
+
+
+## Responsabilidade de cada serviço
+
+- cartoes-ms: Cadastra o cliente, recebe a proposta inicial e publica o evento no tópico `pedido-criado`.
+
+- emissor-ms: Consome a proposta do tópico `pedido-criado`, simula a análise/emissão do cartão e publica o evento no tópico `cartao-emitido`.
+
+- notificacao-ms: Consome o evento do tópico `cartao-emitido` e simula o envio de e-mail ao cliente.
+
+
+ - Política de Retry: O consumidor tentará processar a mensagem **3 vezes** em caso de falhas intermitentes.
+ - Encaminhamento para DLT:** Caso o erro persista após as 3 tentativas, a mensagem é movida para o respectivo tópico de falha:
+ - Falha na Emissão (`emissor-ms`): Encaminhada para `pedido-criado-dead-letter`.
+ - Falha na Notificação (`notificacao-ms`): Encaminhada para `cartao-emitido-dead-letter`.
+
+
+---
+
 
 ## Stack
 

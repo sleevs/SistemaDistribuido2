@@ -1,0 +1,27 @@
+
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:17-alpine
+    container_name: notification-api-postgres
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: jsn
+      POSTGRES_PASSWORD: maximus
+    ports:
+      - "5435:5432" 
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - notification-api-network
+
+volumes:
+  pgdata:
+    driver: local
+
+
+networks:
+  notification-api-network:
+    driver: bridge
+

@@ -1,0 +1,27 @@
+
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:17-alpine
+    container_name: cartao-api-postgres
+    environment:
+      POSTGRES_DB: cartao_db
+      POSTGRES_USER: jsn
+      POSTGRES_PASSWORD: maximus
+    ports:
+      - "5437:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - cartao-api-network
+
+volumes:
+  pgdata:
+    driver: local
+
+
+networks:
+  cartao-api-network:
+    driver: bridge
+

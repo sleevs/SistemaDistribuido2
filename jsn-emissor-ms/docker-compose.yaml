@@ -1,0 +1,27 @@
+
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:17-alpine
+    container_name: emissor-api-postgres
+    environment:
+      POSTGRES_DB: emissor_db
+      POSTGRES_USER: jsn
+      POSTGRES_PASSWORD: maximus
+    ports:
+      - "5436:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - emissor-api-network
+
+volumes:
+  pgdata:
+    driver: local
+
+
+networks:
+  emissor-api-network:
+    driver: bridge
+

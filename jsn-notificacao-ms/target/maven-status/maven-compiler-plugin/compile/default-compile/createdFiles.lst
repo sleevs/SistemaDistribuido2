@@ -1,0 +1,9 @@
+br\com\repository\NotificacaoRepository.class
+br\com\service\NotificacaoConsumer.class
+br\com\controller\NotificacaoController.class
+br\com\entity\NotificacaoEntity.class
+br\com\dto\RequestDto.class
+br\com\App.class
+br\com\config\KafkaConfig.class
+br\com\dto\ResponseDto.class
+br\com\service\NotificacaoService.class
