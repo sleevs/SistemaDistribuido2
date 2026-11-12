@@ -152,7 +152,7 @@ mvn spring-boot:run
 
 ##### Estratégia de Resiliência: Dead Letter Topic
 
- - Política de Retry: O consumidor realizará até 3 tentativas de processamento em caso de falhas.
+ - Política de Retry: O consumidor realizar até 3 tentativas de processamento em caso de falhas.
  - Encaminhamento para DLT: Após esgotar as tentativas, a mensagem é encaminhada para o tópico de falha correspondente.
  - Falha na Emissão (`emissor-ms`): Encaminhada para `proposta-criada-dead-letter` .
  - Falha na Notificação (`notificacao-ms`): Encaminhada para `cartao-emitido-dead-letter`.
