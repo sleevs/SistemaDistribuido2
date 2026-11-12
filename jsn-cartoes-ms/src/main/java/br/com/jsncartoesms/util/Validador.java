@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import br.com.jsncartoesms.dto.PropostaDto;
+import br.com.jsncartoesms.dto.PropostaCartaoDto;
 
 public abstract class Validador {
 
@@ -15,7 +15,7 @@ public abstract class Validador {
 private static final Predicate<String> isNullOrEmpty = s ->  s == null || s.isEmpty();
 
 
-    public static Map<String,Boolean> verificar(PropostaDto dto) {
+    public static Map<String,Boolean> verificar(PropostaCartaoDto dto) {
         Map<String,Boolean> map = new HashMap<>();
         if (isNullOrEmpty.test(dto.getBanco())) {
             map.put("Nome do banco não pode ser nulo",false);

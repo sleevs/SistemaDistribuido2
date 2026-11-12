@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PropostaDto {
+public class PropostaCartaoDto {
     
     @JsonProperty("Nome")
     private String nome;
@@ -17,7 +17,7 @@ public class PropostaDto {
     @JsonProperty("Crédito ou Débito")
     private String tipo;
 
-    public PropostaDto(){
+    public PropostaCartaoDto(){
 
     }
 

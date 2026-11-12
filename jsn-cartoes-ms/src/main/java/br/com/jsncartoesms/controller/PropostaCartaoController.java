@@ -8,19 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import br.com.jsncartoesms.dto.PropostaDto;
-import br.com.jsncartoesms.service.CartaoService;
+import br.com.jsncartoesms.dto.PropostaCartaoDto;
+import br.com.jsncartoesms.service.proposta.PropostaCartaoService;
 import br.com.jsncartoesms.util.Validador;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
-public class CartaoController {
+public class PropostaCartaoController {
     
 
     @Autowired
-    private CartaoService cartaoService;
+    private PropostaCartaoService cartaoService;
 
     @Operation(
     summary = "Criar proposta de crédito",
@@ -32,7 +32,7 @@ public class CartaoController {
     @ApiResponse(responseCode = "400", description = "Requisição inválida")
     })
     @PostMapping("/criar-proposta")
-    public ResponseEntity<Object> criarProposta(@RequestBody PropostaDto proposta) {
+    public ResponseEntity<Object> criarProposta(@RequestBody PropostaCartaoDto proposta) {
 
         try{
             Map<String,Boolean> verificar = Validador.verificar(proposta);
@@ -42,7 +42,7 @@ public class CartaoController {
             }
 
             
-            PropostaDto dto = cartaoService.criarProposta(proposta);
+            PropostaCartaoDto dto = cartaoService.criarProposta(proposta);
        
             if(dto != null){
                 return ResponseEntity.ok(dto);

@@ -1,15 +1,15 @@
-package br.com.jsncartoesms.service;
+package br.com.jsncartoesms.service.proposta;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import br.com.jsncartoesms.dto.PropostaDto;
+import br.com.jsncartoesms.dto.PropostaCartaoDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Service
-public class CartaoProducer {
+public class PropostaCartaoProducer {
 
     
     @Autowired
@@ -18,14 +18,14 @@ public class CartaoProducer {
     @Value("${kafka.topic.cartao}")
     String topicName;
 
-    public CartaoProducer(KafkaTemplate<String, String> kafkaTemplate,
+    public PropostaCartaoProducer(KafkaTemplate<String, String> kafkaTemplate,
                           @Value("${kafka.topic.cartao}") String topicName) {
         this.kafkaTemplate = kafkaTemplate;
         this.topicName = topicName;
     }
     
 
-    public void enviarCartaoParaEmissao(PropostaDto proposta) {
+    public void enviarCartaoParaEmissao(PropostaCartaoDto proposta) {
         
         try{
             ObjectMapper  map = new ObjectMapper();

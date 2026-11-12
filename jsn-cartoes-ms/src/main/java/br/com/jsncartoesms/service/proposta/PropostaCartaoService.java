@@ -1,15 +1,15 @@
-package br.com.jsncartoesms.service;
+package br.com.jsncartoesms.service.proposta;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import br.com.jsncartoesms.dto.PropostaDto;
+import br.com.jsncartoesms.dto.PropostaCartaoDto;
 
 @Service
-public class CartaoService {
+public class PropostaCartaoService {
 
 
     @Autowired
-    private CartaoProducer CartaoProducer;
+    private PropostaCartaoProducer CartaoProducer;
 
     /*
      * criar cartao de credito 
@@ -17,7 +17,7 @@ public class CartaoService {
      * realizar chamada para o servicço emissao de cartão
      * 
      */
-    public PropostaDto criarProposta(PropostaDto proposta){
+    public PropostaCartaoDto criarProposta(PropostaCartaoDto proposta){
        
         if(proposta.getLimite().intValue() <= 1000){
             CartaoProducer.enviarCartaoParaEmissao(proposta);
