@@ -98,35 +98,6 @@ Para evitar o cenário de falha atômica na criação de propostas no serviço `
 
 ### Fluxo da Arquitetura
 
-```text
-CLIENT
-  |
-  v
-cartoes-ms
-(Cadastro + Proposta)
-  |
-  | publica PedidoCriadoEvent
-  v
-Kafka: predido-creado-topic
-  |
-  v
-emissor-ms
-(group: emissor-group)
-  | Emite cartão
-  | publica CartaoEmitidoEvent
-  v
-Kafka: cartao-emitido-topic
-  |
-  v
-notificacao-ms
-(group: notificacao-group)
-  |
-  v
-Envio de e-mail
-
->>>>>>> 5526894fbf4123a1618f71e27d084e6b93da8e2a
-
----
 
 
 ## Stack
