@@ -16,6 +16,13 @@ A arquitetura prioriza desacoplamento, escalabilidade, resiliência e consistên
 O objetivo é demonstrar a aplicação de conceitos de engenharia de software e arquitetura de sistemas distribuídos em um cenário próximo ao de uma plataforma bancária real.
 
 ---
+
+### Fluxo da Arquitetura
+
+![Arquitetura do Projeto](docs/imagens/fluxo_da_arquitetura.png)
+
+---
+
 ## Problema
 
 Processos de emissão de cartão de crédito em sistemas bancários tradicionais costumam ser:
@@ -180,12 +187,6 @@ Um processo em segundo plano publica os eventos pendentes da Outbox no Kafka, re
 
 ---
 
-
-### Fluxo da Arquitetura
-
-![Arquitetura do Projeto](docs/imagens/fluxo_da_arquitetura.png)
-
----
 
 ### Infraestrutura: 
 explicar os três nós do cluster Kafka provisionados com Terraform. --- DOING
