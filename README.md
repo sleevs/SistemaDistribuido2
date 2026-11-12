@@ -105,7 +105,7 @@ Um processo em segundo plano monitora a tabela de outbox e garante que a mensage
 
 ### Fluxo da Arquitetura
 
-
+![Arquitetura do Projeto](docs/images/fluxo_da_arquitetura.png)
 
 ## Stack
 
