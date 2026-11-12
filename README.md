@@ -60,7 +60,7 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
 ##### Tópicos Kafka
 
 - `pedido-creado`: Recebe pedidos de emissão de cartões.
-- `cartao-eitido`: Comunica a conclusão da emissão do cartão.
+- `cartao-emitido`: Comunica a conclusão da emissão do cartão.
 - `pedido-criado-dead-letter`: Armazena mensagens que falharam no processamento da emissão.
 - `cartao-emitido-dead-letter`: Armazena mensagens que falharam no envio de notificações.
 
