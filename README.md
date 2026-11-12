@@ -25,6 +25,22 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
 
 ---
 
+## Stack
+
+- Java 21
+- Maven
+- Spring Boot
+- Apache Kafka
+- Docker
+- Terraform
+- Postgres
+- OpenTelemetry
+
+---
+
+
+
+
 ## Funcionalidades
 
 - Cadastro de clientes e propostas de crédito (`cartoes-ms`)
@@ -46,6 +62,56 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
 
 ---
 
+
+
+## Como executar: 
+
+
+### 1. Provisionamento da Infraestrutura com Terraform
+Acesse o diretório de infraestrutura e execute:
+
+```bash
+terraform init
+terraform validate
+terraform plan
+terraform apply
+```
+
+### 2. Inicialização dos Bancos de Dados
+Em cada microservice, acesse seu respectivo diretório e execute:
+```bash
+docker compose up -d
+```
+
+### 3. Build dos Microservices
+Execute o build dos serviços na seguinte ordem:
+
+1. **cartoes-ms**
+2. **emissor-ms**
+3. **notificacao-ms**
+
+Em cada diretório, execute:
+
+```bash
+ mvn clean install
+```
+
+### 4. Inicialização dos Microservices
+Inicie os serviços na seguinte ordem:
+
+1. **cartoes-ms**
+2. **emissor-ms**
+3. **notificacao-ms**
+
+Em cada diretório, execute:
+
+
+```bash
+mvn spring-boot:run
+
+```
+
+---
 
 
 ##### Tópicos Kafka
@@ -111,13 +177,20 @@ Um processo em segundo plano publica os eventos pendentes da Outbox no Kafka, re
 
 ---
 
-## Stack
+### Infraestrutura: 
+explicar os três nós do cluster Kafka provisionados com Terraform. --- DOING
 
-- Java 21
-- Maven
-- Spring Boot
-- Apache Kafka
-- Docker
-- Terraform
-- Postgres
-- OpenTelemetry
+---
+
+### Observabilidade: 
+demonstrar como o OpenTelemetry é utilizado. --- DOING
+
+---
+
+### Testes: 
+apresentar testes unitários e de integração, se implementados. --- DOING
+
+
+---
+
+
