@@ -6,6 +6,16 @@ O sistema modela o processo de um banco desde o cadastro do cliente até a emiss
 
 ---
 
+## Visão Geral
+Sistema distribuído de emissão de cartões de crédito, desenvolvido com Java 21 e Spring Boot, utilizando arquitetura de microsserviços e comunicação assíncrona baseada em eventos com Apache Kafka.
+
+O projeto simula um fluxo bancário de ponta a ponta, desde o cadastro do cliente e submissão da proposta de crédito até o processamento, emissão do cartão e notificação.
+
+A arquitetura prioriza desacoplamento, escalabilidade, resiliência e consistência de dados, implementando padrões como Transactional Outbox, Idempotência, Retry e Dead Letter Topics (DLT).
+
+O objetivo é demonstrar a aplicação de conceitos de engenharia de software e arquitetura de sistemas distribuídos em um cenário próximo ao de uma plataforma bancária real.
+
+---
 ## Problema
 
 Processos de emissão de cartão de crédito em sistemas bancários tradicionais costumam ser:
