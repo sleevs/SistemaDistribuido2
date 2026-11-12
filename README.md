@@ -68,7 +68,7 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
 
 
 ### 1. Provisionamento da Infraestrutura com Terraform
-Acesse o diretório de infraestrutura e execute:
+Terraform Provisiona os três nós Kafka. Acesse o diretório de infraestrutura e execute:
 
 ```bash
 terraform init
@@ -78,7 +78,7 @@ terraform apply
 ```
 
 ### 2. Inicialização dos Bancos de Dados
-Em cada microservice, acesse seu respectivo diretório e execute:
+Docker Compose inicializa os três bancos PostgreSQL e inicializa um OpenTelemetry Collector compartilhado
 ```bash
 docker compose up -d
 ```
