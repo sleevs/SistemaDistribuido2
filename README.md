@@ -39,10 +39,10 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
 
 ## Responsabilidade de cada serviço
 
-- cartoes-ms: Cadastra o cliente, recebe a proposta inicial e publica o evento no tópico `pedido-criado`.
+- cartoes-ms: Cadastra o cliente, recebe a proposta inicial e publica o evento no tópico `proposta-criada`.
 <<<<<<< HEAD
 
-- emissor-ms: Consome a proposta do tópico `pedido-criado`, simula a análise/emissão do cartão e publica o evento no tópico `cartao-emitido`.
+- emissor-ms: Consome a proposta do tópico `proposta-criada`, simula a análise/emissão do cartão e publica o evento no tópico `cartao-emitido`.
 
 - notificacao-ms: Consome o evento do tópico `cartao-emitido` e simula o envio de e-mail ao cliente.
 
@@ -53,36 +53,43 @@ O sistema é dividido em serviços independentes que se comunicam via eventos.
  - Falha na Notificação (`notificacao-ms`): Encaminhada para `cartao-emitido-dead-letter`.
 
 =======
-- emissor-ms: Consome a proposta do tópico `pedido-criado`, simula a análise/emissão do cartão e publica o evento no tópico `cartao-emitido`.
+- emissor-ms: Consome a proposta do tópico `proposta-criada`, simula a análise/emissão do cartão e publica o evento no tópico `cartao-emitido`.
 - notificacao-ms: Consome o evento do tópico `cartao-emitido` e simula o envio de e-mail ao cliente.
 
 
 ##### Tópicos Kafka
 
-- `pedido-creado`: Recebe pedidos de emissão de cartões.
-- `cartao-emitido`: Comunica a conclusão da emissão do cartão.
-- `pedido-criado-dead-letter`: Armazena mensagens que falharam no processamento da emissão.
-- `cartao-emitido-dead-letter`: Armazena mensagens que falharam no envio de notificações.
+- `proposta-criada`: Recebe eventos de propostas de emissão de cartões publicados pelo cartoes-ms.
+- `cartao-emitido`: Comunica a conclusão da emissão do cartão pelo emissor-ms.
+- `proposta-criada-dead-letter`: Armazena mensagens que falharam no processamento pelo emissor-ms, após esgotar as tentativas de retry.
+- `cartao-emitido-dead-letter`: Armazena mensagens que falharam no processamento pelo notification-ms, após esgotar as tentativas de retry.
 
 ##### Consumer Groups
 
-- `emissor-group` (`emissor-ms`): Consome pedidos e realiza a emissão dos cartões.
+- `emissor-group` (`emissor-ms`): Consome proposta e realiza a emissão dos cartões.
 - `notification-group` (`notification-ms`): Consome eventos de emissão e envia notificações por e-mail.
 
 
 ##### Estratégia de Resiliência: Dead Letter Topic
  - Política de Retry: O consumidor tentará processar a mensagem **3 vezes** em caso de falhas intermitentes.
  - Encaminhamento para DLT: Caso o erro persista após as 3 tentativas, a mensagem é movida para o respectivo tópico de falha:
- - Falha na Emissão (`emissor-ms`): Encaminhada para `pedido-criado-dead-letter`.
+ - Falha na Emissão (`emissor-ms`): Encaminhada para `proposta-criado-dead-letter`.
  - Falha na Notificação (`notificacao-ms`): Encaminhada para `cartao-emitido-dead-letter`.
 
 ##### Estratégias de Resiliência e Consistência: Outbox Pattern.
 
-- Consistência na Publicação: Transactional Outbox Pattern
-Para evitar o cenário de falha atômica na criação de propostas no serviço `cartoes-ms` (onde os dados são salvos no banco, mas a publicação no Kafka falha por instabilidade do broker, ou vice-versa):
+Consistência na Publicação: 
+Transactional Outbox Pattern Para evitar o cenário de falha atômica na criação de propostas no serviço `cartoes-ms` (onde os dados são salvos no banco, mas a publicação no Kafka falha por instabilidade do broker, ou vice-versa):
 
-- Persistência Atômica: A gravação dos dados da proposta e a intenção do evento de publicação (`PedidoCriadoEvent`) são executadas dentro da **mesma transação ACID** do banco de dados relacional.
-- Garantia de Entrega : Um processo em segundo plano monitora a tabela de outbox e garante que a mensagem seja enviada e confirmada pelo Apache Kafka com sucesso antes de marcá-la como processada, eliminando cenários de inconsistência entre o banco e o cluster.
+Persistência Atômica: 
+A gravação dos dados da proposta e a intenção do evento de publicação (PropostaCriadoEvent) são executadas dentro da mesma transação ACID do banco de dados relacional.
+
+Garantia de Entrega : 
+Um processo em segundo plano monitora a tabela de outbox e garante que a mensagem seja enviada e confirmada pelo Apache Kafka com sucesso antes de marcá-la como processada, eliminando cenários de inconsistência entre o banco e o cluster.
+
+- cartoes-ms: salva a proposta e o evento na Outbox.
+- emissor-ms: consome o evento proposta , processa a emissão e salva o cartão e o evento na Outbox.
+- notification-ms: consome o evento, registra a notificação na Outbox e realiza o envio do e-mail.
 
 ---
 
