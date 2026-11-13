@@ -180,7 +180,7 @@ Um processo em segundo plano publica os eventos pendentes da Outbox no Kafka, re
 - Um tópico para cada evento de negócio.
 - Um consumer group independente por serviço consumidor.
 - Retry + Dead Letter Topic (DLT) para tratamento de falhas.
-- `pedidoId` como chave das mensagens para garantir ordenação por pedido.
+- `propostaId` como chave das mensagens para garantir ordenação por proposta.
 - Idempotência para evitar processamento e emissão duplicados.
 - Transactional Outbox Garantia de Entrega com Transactional Outbox
 
@@ -188,8 +188,105 @@ Um processo em segundo plano publica os eventos pendentes da Outbox no Kafka, re
 ---
 
 
-### Infraestrutura: 
-explicar os três nós do cluster Kafka provisionados com Terraform. --- DOING
+## Infraestrutura: 
+
+---
+
+### Oranização do Terraform
+- O Terraform é utilizado para provisionar e gerenciar a infraestrutura do cluster Apache Kafka usando Docker como Provier.
+- A infraestrutura é declarada em arquivos .tf, automatizando  a criação e a configuração dos containers Kafka.
+- O provisionamento dos containers Kafka é realizado por meio do Docker Provider do Terraform, utilizando conexões SSH para acessar remotamente os Docker Engines dos três computadores.
+
+```bash
+kafka-cluster/
+  /providers.tf
+  /variables.tf
+  /terraform.tfvars
+  /main.tf
+  /outputs.tf
+```
+- providers.tf : Configuração do provider Docker
+- variables.tf : Declaração das variáveis
+- terraform.tfvars : Definição dos valores das variáveis
+- main.tf : Definição dos recursos e containers Kafka
+- outputs.tf : Exposição das informações dos recursos provisionados
+
+
+### Arquitetura do cluster Kafka
+
+O cluster utiliza Apache Kafka com arquitetura Kafka Raft Metadata mode.
+São usados três nós distribuídos em computadores diferentes, cada um executando um container Kafka independente.
+
+#### Gerenciamento de liderança e tolerância a falhas
+O cluster utiliza o mecanismo de consenso Raft para gerenciamento e replicação dos metadados..
+A configuração utiliza o quorum estático, definido pela propriedade controller.quorum.voters.
+- Um Controller Leader é eleito entre os 3 controllers.
+- Os outros 2 controllers mantêm réplicas dos metadados.
+- O cluster suporta a indisponibilidade de um computador sem perder o quorum.
+- Os brokers distribuem a liderança das partições entre os nós.
+- O cluster possui 3 controllers votantes, são necessários 2 para manter o quorum.
+
+Os tópicos Kafka são configurados com Replication Factor 3 e min.insync.replicas=2.
+
+```bash
+kafka-topics.sh --bootstrap-server localhost:9092 \
+  --create --topic proposta-criada \
+  --partitions 3 --replication-factor 3 --config min.insync.replicas=2
+```
+
+
+
+#### Configurações utilizadas:
+- 3 partições: permite distribuir o processamento entre consumidores.
+- Replication Factor 3: cada partição possui três réplicas distribuídas entre os brokers.
+- min.insync.replicas=2 : permite manter réplicas dos dados caso um broker fique indisponível.
+
+
+
+
+#### Comportamento diante de falhas
+
+- 3 brokers disponíveis : Escritas permitidas.
+- 1 broker indisponível : Escritas continuam com 2 réplicas sincronizadas.
+- 2 brokers indisponíveis : Escritas recusadas.
+- 1 controller indisponível : Quorum KRaft permanece disponível.
+
+
+
+#### Confiabilidade e garantia de entrega dos Producers
+
+Os microsserviços que publicam eventos no Kafka utilizam configurações de confiabilidade para garantir maior segurança na publicação das mensagens.
+
+Configurações utilizadas:
+
+```bash
+properties
+spring.kafka.producer.acks=all
+spring.kafka.producer.properties.enable.idempotence=true
+spring.kafka.producer.properties.max.in.flight.requests.per.connection=5
+spring.kafka.producer.properties.delivery.timeout.ms=120000
+spring.kafka.producer.properties.request.timeout.ms=30000
+```
+
+
+#### Responsabilidade das configurações:
+
+- acks=all: aguarda confirmação de todas as réplicas sincronizadas (ISR).
+
+- enable.idempotence=true: evita duplicação de mensagens provocada por retries do Producer.
+
+- max.in.flight.requests.per.connection=5: permite até cinco requisições simultâneas, mantendo a ordenação com idempotência habilitada.
+
+- delivery.timeout.ms=120000: define o tempo máximo para entrega da mensagem.
+
+- request.timeout.ms=30000: define o tempo máximo de espera pela resposta de uma requisição.
+
+
+  
+####  Persistência de dados
+- Cada computador mantém seu próprio volume para armazenar os dados do Kafka.
+- Isso permite que os dados permaneçam disponíveis após a reinicialização dos containers, sem depender do armazenamento de outro computador.
+- A replicação entre brokers contribui para a proteção contra falhas de infraestrutura.
 
 ---
 
