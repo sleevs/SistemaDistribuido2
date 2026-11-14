@@ -1,22 +1,62 @@
-version: "3.7"
+
 services:
-  kafka:
-    image: landoop/fast-data-dev:latest
-    container_name: kafka
-    ports:
-      - 3181:3181
-      - 3040:3040
-      - 7082:7082
-      - 7083:7083
-      - 9092:9092
+  # Cartao MS
+  postgres-cartao-db:
+    image: postgres:17-alpine
+    container_name: cartao-api-postgres
     environment:
-      ADV_HOST: 127.0.0.1
-      RUNTESTS: 0
-      SAMPLEDATA: 0
-      BROKER_PORT: 9092
-      REST_PORT: 7082
-      CONNECT_PORT: 7083
-      ZK_PORT: 3181
-      WEB_PORT: 3040
-      REGISTRY_PORT: 8081
-    restart: always
+      POSTGRES_DB: cartao_db
+      POSTGRES_USER: jsn
+      POSTGRES_PASSWORD: maximus
+    ports:
+      - "5437:5432"
+    volumes:
+      - pgdata-cartao:/var/lib/postgresql/data
+    networks:
+      - cartao-api-network
+
+  # Emissor MS
+  postgres-emissor-db:
+    image: postgres:17-alpine
+    container_name: emissor-api-postgres
+    environment:
+      POSTGRES_DB: emissor_db
+      POSTGRES_USER: jsn
+      POSTGRES_PASSWORD: maximus
+    ports:
+      - "5436:5432"
+    volumes:
+      - pgdata-emissor:/var/lib/postgresql/data
+    networks:
+      - emissor-api-network
+
+  # Notificacao MS
+  postgres-notificacao-db:
+    image: postgres:17-alpine
+    container_name: notificacao-api-postgres
+    environment:
+      POSTGRES_DB: notificacao_db
+      POSTGRES_USER: jsn
+      POSTGRES_PASSWORD: maximus
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata-notificacao:/var/lib/postgresql/data
+    networks:
+      - notificacao-api-network
+
+volumes:
+  pgdata-cartao:
+    driver: local
+  pgdata-emissor:
+    driver: local
+  pgdata-notificacao:
+    driver: local
+
+networks:
+  cartao-api-network:
+    driver: bridge
+  emissor-api-network:
+    driver: bridge
+  notificacao-api-network:
+    driver: bridge

@@ -26,17 +26,20 @@ public interface OutboxRepository extends JpaRepository<OutboxEntity,UUID>{
         """, nativeQuery = true)
     List<OutboxEntity> buscarEventosDisponiveis(@Param ("workerSize") int workerSize );
 
-@Modifying
-@Transactional
-@Query(value = """
+
+
+
+    @Modifying
+    @Transactional
+    @Query(value = """
     UPDATE outbox e
-    SET e.status = 'PUBLICAR',
-        e.publicar_em = :publicarEm,
-        e.bloqueado_ate = null,
-        e.ultimo_erro = null
+    SET status = 'PUBLICADO',
+        publicado_em = :publicarEm,
+        bloqueado_ate = null,
+        ultimo_erro = null
     WHERE e.id = :id
-      AND e.status = 'PROCESSANDO'
-""", nativeQuery= true)
-public int marcarPublicacao(@Param("id") UUID id, @Param("publicarEm") OffsetDateTime publicarEm);
-    
-}
+        AND e.status = 'PROCESSANDO'
+    """, nativeQuery = true)
+    public int marcarPublicacao(@Param("id") UUID id, @Param("publicarEm") OffsetDateTime publicarEm);
+        
+    }

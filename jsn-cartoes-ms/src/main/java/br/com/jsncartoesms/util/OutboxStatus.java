@@ -3,6 +3,6 @@ package br.com.jsncartoesms.util;
 public enum OutboxStatus{
     PENDENTE,
     PROCESSANDO,
-    PUBLIADO,
+    PUBLICADO,
     DEAD_LETTER
 }

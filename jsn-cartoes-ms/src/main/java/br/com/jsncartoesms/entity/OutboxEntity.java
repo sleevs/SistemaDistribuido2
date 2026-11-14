@@ -9,6 +9,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import br.com.jsncartoesms.util.OutboxStatus;
 import jakarta.persistence.Column;
 
@@ -29,6 +33,7 @@ public class OutboxEntity{
     @Column(name = "topico" , nullable = false)
     private String topico;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
     private String payload;
 

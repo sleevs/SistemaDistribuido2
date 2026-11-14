@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import br.com.jsncartoesms.dto.PropostaCartaoDto;
+import br.com.jsncartoesms.dto.PropostaResponseDto;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -25,7 +27,7 @@ public class PropostaCartaoProducer {
     }
     
 
-    public void enviarCartaoParaEmissao(PropostaCartaoDto proposta) {
+    public void enviarCartaoParaEmissao(PropostaResponseDto proposta) {
         
         try{
             ObjectMapper  map = new ObjectMapper();

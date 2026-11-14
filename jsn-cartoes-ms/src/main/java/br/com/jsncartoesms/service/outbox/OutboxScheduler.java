@@ -14,7 +14,7 @@ public class OutboxScheduler {
     private final OutboxPublicacaoService outboxPublicacaoService;
 
 
-    public OutboxScheduler(OutboxReservaService reservaService,OutboxPublicacaoService outboxPublicacaoService){
+    public OutboxScheduler(OutboxReservaService reservaService, OutboxPublicacaoService outboxPublicacaoService){
         this.reservaService = reservaService;
         this.outboxPublicacaoService = outboxPublicacaoService;
     }
@@ -29,7 +29,12 @@ public class OutboxScheduler {
 
         System.out.println("LOG INFO - PROCESSANDO OUTBOX EVENTO : " + eventos.size());
         
-        eventos.forEach(outboxPublicacaoService::publicar);
+       // eventos.forEach(outboxPublicacaoService::publicar);
+
+        for(OutboxMensagemDto e : eventos){
+            outboxPublicacaoService.publicar(e);
+        }
+        
     }
     
 }
