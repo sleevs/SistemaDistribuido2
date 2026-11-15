@@ -53,7 +53,7 @@ jobs:
 
       - name: Upload Test Reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cartoes-test-reports
           path: |
@@ -64,7 +64,7 @@ jobs:
 
       - name: Upload JaCoCo Coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cartoes-jacoco
           path: jsn-cartoes-ms/target/site/jacoco/
@@ -72,7 +72,7 @@ jobs:
           retention-days: 14
 
       - name: Upload Executable JAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cartoes-application
           path: jsn-cartoes-ms/target/*.jar
