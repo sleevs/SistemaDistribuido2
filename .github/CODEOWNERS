@@ -1,22 +1,8 @@
 
-# Default ownership
-* @jsn-software/backend-team
 
-# Application source code
-/src/main/java/ @jsn-software/backend-team
+* @sleevs
 
-# Unit and integration tests
-/src/test/ @jsn-software/qa-team
-
-# CI/CD and DevSecOps
-/.github/ jsn-software/devops-team
-
-# Maven configuration
-/pom.xml @jsn-software/backend-team
-/mvnw @your-organization/devops-team
-
-# Docker configuration
-/Dockerfile @jsn-software/devops-team
-
-# Documentation
-/README.md @jsn-software/tech-leads
+/jsn-cartoes-ms/ @sleevs
+/jsn-emissor-ms/ @sleevs
+/jsn-notificacao-ms/ @sleevs
+/.github/ @sleevs

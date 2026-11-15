@@ -3,13 +3,13 @@ name: Notificacao Microservice CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, develop]
     paths:
       - 'jsn-notificacao-ms/**'
       - '.github/workflows/notificacao-ci.yml'
 
   pull_request:
-    branches: [main, develop]
+    branches: [master, develop]
     paths:
       - 'jsn-notificacao-ms/**'
       - '.github/workflows/notificacao-ci.yml'
@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: read
+  security-events: write
 
 concurrency:
   group: notificacao-ci-${{ github.ref }}
@@ -25,28 +26,28 @@ concurrency:
 
 jobs:
   build:
-    name: Build and Test Notificacao
+    name: Build and Test - Java 21
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: jsn-notificacao-ms
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
           cache-dependency-path: jsn-notificacao-ms/pom.xml
 
-      - name: Maven Verify
+      - name: Verify Java and Maven
         run: |
-          chmod +x mvnw
-          ./mvnw -B -ntp clean verify
+          java -version
+          ./mvnw --version
+
+      - name: Build and Verify
+        run: ./mvnw -B -ntp clean verify
 
       - name: Upload Test Reports
         if: always()
@@ -59,10 +60,44 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      - name: Upload JAR
+      - name: Upload JaCoCo Coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: notificacao-jacoco
+          path: jsn-notificacao-ms/target/site/jacoco/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Executable JAR
         uses: actions/upload-artifact@v4
         with:
           name: notificacao-application
           path: jsn-notificacao-ms/target/*.jar
           if-no-files-found: error
           retention-days: 14
+
+  code-quality:
+    name: Static Code Analysis - CodeQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: java-kotlin
+          build-mode: manual
+
+      - name: Build for CodeQL
+        working-directory: jsn-notificacao-ms
+        run: ./mvnw -B -ntp clean compile
+
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java"

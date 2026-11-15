@@ -4,7 +4,7 @@ name: Enterprise Dependency Security Review
 on:
   pull_request:
     branches:
-      - main
+      - master
       - develop
 
 permissions:
