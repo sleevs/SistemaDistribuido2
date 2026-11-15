@@ -1,0 +1,52 @@
+
+version: 2
+
+updates:
+
+  # Maven dependencies
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/Sao_Paulo"
+
+    open-pull-requests-limit: 10
+
+    reviewers:
+      - "jsn-software/backend-team"
+
+    labels:
+      - "dependencies"
+      - "maven"
+
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework.boot:*"
+          - "org.springframework:*"
+
+      testing:
+        patterns:
+          - "org.junit:*"
+          - "org.mockito:*"
+          - "org.testcontainers:*"
+
+  # GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/Sao_Paulo"
+
+    open-pull-requests-limit: 10
+
+    reviewers:
+      - "your-organization/devops-team"
+
+    labels:
+      - "dependencies"
+      - "github-actions"
