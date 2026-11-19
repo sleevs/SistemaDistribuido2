@@ -1,4 +1,4 @@
-# Sistema de Emissão de Cartões de Crédito com Arquitetura Baseada em Microservices
+# Sistema de Emissão de Cartões de Crédito com Microservices e Event-Driven Architecture
 
 Sistema backend distribuído que simula o fluxo de análise de crédito e emissão de cartões, utilizando arquitetura orientada a eventos com Apache Kafka e Spring Boot.
 
